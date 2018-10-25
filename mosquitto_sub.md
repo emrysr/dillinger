@@ -39,6 +39,8 @@ mqtt pub -t user/dave/request --ca /home/emrys/.ssh/mqtt/ca.crt.pem --insecure -
 ```
 mqtt sub -t user/dave/request --ca /home/emrys/.ssh/mqtt/ca.crt.pem --insecure --protocol mqtts -u dave -P dave
 ```
+> supported protocols: 'mqtt', 'mqtts', 'tcp', 'tls', 'ws', 'wss'.
+
 
 ## Keys and SSL Certificates
 Each client needs a copy of the signed public key generated form the Broker's private key. The private key will reside on the public MQTT Broker and will be used to verify the encrypted messages from each client.
@@ -96,13 +98,22 @@ openssl x509 -req -in mqtt.local.csr.pem -CA ca.crt.pem -CAkey ca.key.pem -CAcre
 - `-req`
 - `-in`
 
+# QOS
+### MQTT supports three service levels qualities:
+
+- `QoS = 0` - means one delivery at most. The message is delivered according to the capabilities of the underlying network. No response is sent by the receiver and no retry is performed by the sender. The receiver gets the message either once or not at all.
+- `QoS = 1` - means one delivery at least. This quality of service ensures that the message arrives at the receiver at least once, but there’s a probability of duplicating messages on the receiver’s side. If the publisher has not received the acknowledgment of delivery from the message broker, it sends the message again. After the duplicated message is received by the broker, the latter sends it again to all subscribers.
+- `QoS  = 2` -  means one delivery exactly. This is the highest quality of service. It is used when neither loss nor duplication of messages are acceptable.
+
+
 # todo
 - authentication
   use a username and password to authenticate
   - password hashes: `$ np` is the command to generate the password hashes
 - authorization
   use a access control list (acl) to restrict authourized users to specific topics
-
-
+- `/usr/local/sbin/mosquitto` (v1.5.x) works with `/etc/mosquitto/auth-plugin3.so`
+- `/usr/sbin/mosquitto` (v1.4.x) works with `/etc/mosquitto/auth-plugin2.so`
+- 
 
 
