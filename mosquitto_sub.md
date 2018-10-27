@@ -21,17 +21,23 @@ Here are the commands parameters this project uses:
 - `--verbose` prints the topic and the payload when message received
 - `--protocol-version` *[mqttv311|mqttv31]* defaults to `mqttv311`
 
-## Example
+## MQTT over TLS Example using mosquitto_sub client
 ```bash
 $ mosquitto_sub \
     --cafile ~/.ssh/mqtt/ca.crt \
     --port 8883 \
     --host emoncms.org -S \
-    --topic user/emrys/request/# \
+    --topic user/dave/request/# \
     --id-prefix emoncms_ \
-    --username emrys \
-    --pw PASSWORD
+    --username dave \
+    --pw dave
 ```
+## Secure Websocket over TLS example using PAHO mqtt Node.js client
+install cli on your system: ```$ npm install mqtt -g```
+```bash
+mqtt pub -t user/dave/request --ca /home/emrys/.ssh/mqtt/ca.crt.pem --insecure --protocol wss -u dave -P dave -m hi -p 8081
+```
+
 ### using nodejs mqtt client
 ```
 mqtt pub -t user/dave/request --ca /home/emrys/.ssh/mqtt/ca.crt.pem --insecure --protocol mqtts -u dave -P dave -m "http://localhost/emoncms/feed/list.json?apikey=cb9579be83678b89a5eb0faea08ad83"
@@ -101,10 +107,14 @@ openssl x509 -req -in mqtt.local.csr.pem -CA ca.crt.pem -CAkey ca.key.pem -CAcre
 # QOS
 ### MQTT supports three service levels qualities:
 
-- `QoS = 0` - means one delivery at most. The message is delivered according to the capabilities of the underlying network. No response is sent by the receiver and no retry is performed by the sender. The receiver gets the message either once or not at all.
-- `QoS = 1` - means one delivery at least. This quality of service ensures that the message arrives at the receiver at least once, but there’s a probability of duplicating messages on the receiver’s side. If the publisher has not received the acknowledgment of delivery from the message broker, it sends the message again. After the duplicated message is received by the broker, the latter sends it again to all subscribers.
-- `QoS  = 2` -  means one delivery exactly. This is the highest quality of service. It is used when neither loss nor duplication of messages are acceptable.
+- `QoS = 0` - **one delivery at most**.
+    The message is delivered according to the capabilities of the underlying network. No response is sent by the receiver and no retry is performed by the sender. The receiver gets the message either once or not at all.
+- `QoS = 1` - **one delivery at least**.
+    This quality of service ensures that the message arrives at the receiver at least once, but there’s a probability of duplicating messages on the receiver’s side. If the publisher has not received the acknowledgment of delivery from the message broker, it sends the message again. After the duplicated message is received by the broker, the latter sends it again to all subscribers.
+- `QoS  = 2` -  **one delivery exactly**.
+    This is the highest quality of service. It is used when neither loss nor duplication of messages are acceptable.
 
+I'm using QoS 1 in my initial testing.
 
 # todo
 - authentication
