@@ -22,20 +22,27 @@ Here are the commands parameters this project uses:
 - `--protocol-version` *[mqttv311|mqttv31]* defaults to `mqttv311`
 
 ## MQTT over TLS Example using mosquitto_sub client
+(not confirmed to work)
 ```bash
 $ mosquitto_sub \
-    --cafile ~/.ssh/mqtt/ca.crt \
-    --port 8883 \
-    --host emoncms.org -S \
-    --topic user/dave/request/# \
-    --id-prefix emoncms_ \
-    --username dave \
+    --cafile /home/emrys/.ssh/mqtt/ca.crt.pem
+    --port 8883
+    --host localhost
+    --topic user/dave/request/#
+    --id-prefix emoncms_
+    --username dave
     --pw dave
+    --insecure
 ```
-## Secure Websocket over TLS example using PAHO mqtt Node.js client
+## Secure Websocket over TLS example using PAHO nodejs mqtt client
 install cli on your system: ```$ npm install mqtt -g```
 ```bash
 mqtt pub -t user/dave/request --ca /home/emrys/.ssh/mqtt/ca.crt.pem --insecure --protocol wss -u dave -P dave -m hi -p 8081
+```
+
+### mqtt
+```
+$ mqtt pub -t user/dave/request  --protocol mqtt -u dave -P dave -m "hello world" -p 1883
 ```
 
 ### using nodejs mqtt client
@@ -104,6 +111,19 @@ openssl x509 -req -in mqtt.local.csr.pem -CA ca.crt.pem -CAkey ca.key.pem -CAcre
 - `-req`
 - `-in`
 
+# Websockets (ws://)
+the browser can connect to resources starting with `ws://` however you must have a valid CA signed certificate to use a `wss://` connection. For testing you must drop the secure connection option. 
+
+# Web content (http://)
+The mosquitto MQTT broker has been setup to respond with the js websockets testing client. This would then connect to the mosquitto broker via a websocket connection
+
+# Ports
+you can specify any port you want for the connections but here are the default ones:
+- mqtt = 1883
+- mqtts = 8883
+- mqtt over websockets = 8080 (might change this to default http 80)
+- mqtt over secure websockets = 8081 (might change this to default https 443)
+
 # QOS
 ### MQTT supports three service levels qualities:
 
@@ -116,14 +136,16 @@ openssl x509 -req -in mqtt.local.csr.pem -CA ca.crt.pem -CAkey ca.key.pem -CAcre
 
 I'm using QoS 1 in my initial testing.
 
+# installed mosquitto versions
+- `/usr/local/sbin/mosquitto` (v1.5.x) works with `/etc/mosquitto/auth-plugin3.so`
+- `/usr/sbin/mosquitto` (v1.4.x) works with `/etc/mosquitto/auth-plugin2.so`
+
 # todo
 - authentication
   use a username and password to authenticate
   - password hashes: `$ np` is the command to generate the password hashes
 - authorization
   use a access control list (acl) to restrict authourized users to specific topics
-- `/usr/local/sbin/mosquitto` (v1.5.x) works with `/etc/mosquitto/auth-plugin3.so`
-- `/usr/sbin/mosquitto` (v1.4.x) works with `/etc/mosquitto/auth-plugin2.so`
-- 
+ 
 
 
