@@ -24,7 +24,7 @@ Here are the commands parameters this project uses:
 ## MQTT over TLS Example using mosquitto_sub client
 (not confirmed to work)
 ```bash
-$ mosquitto_sub \
+$  \
     --cafile /home/emrys/.ssh/mqtt/ca.crt.pem
     --port 8883
     --host localhost
